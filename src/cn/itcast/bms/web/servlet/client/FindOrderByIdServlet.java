@@ -1,0 +1,48 @@
+package cn.itcast.bms.web.servlet.client;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import cn.itcast.bms.domain.Orders;
+import cn.itcast.bms.service.OrderService;
+
+/**
+ * Servlet implementation class FindOrderByIdServlet
+ */
+@WebServlet("/FindOrderByIdServlet")
+public class FindOrderByIdServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		this.doPost(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// 1.获取用户类型
+		String type = request.getParameter("type");
+		// 2.得到要查询的订单的id
+		String id = request.getParameter("id");
+		// 3.根据id查找订单
+		OrderService service = new OrderService();
+		Orders order = (Orders) service.findOrderById(id);
+		// 4.将查询出的订单信息添加到request作用域中
+		request.setAttribute("order", order);
+		// 5.如果用户类型不为null，则请求转发到view.jsp页面，否则转发到orderInfo.jsp页面
+		if (type != null) {
+			request.getRequestDispatcher("/admin/orders/view.jsp").forward(request, response);
+			return;
+		}
+		request.getRequestDispatcher("/client/orderInfo.jsp").forward(request, response);
+	}
+
+}
